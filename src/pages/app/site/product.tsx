@@ -1,16 +1,16 @@
 import Layout from "@/components/app/Layout";
+import ProductGrid from "@/components/site/ProductGrid";
 import { siteNavigation } from "@/constants/navigation";
-import NewProductForm from "@/components/site/NewProductForm";
 import React from "react";
 
-const index = () => {
+const product = () => {
   return (
-    <Layout title="Shop" navigation={siteNavigation}>
+    <Layout title="Products" navigation={siteNavigation}>
       <div className="bg-white px-16 py-12 rounded-md shadow-lg">
-       
+      <ProductGrid />
       </div>
     </Layout>
   );
 };
 
-export default index;
+export default product;

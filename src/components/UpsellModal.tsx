@@ -140,7 +140,13 @@ export default function UpsellModal() {
                                                         </div>
 
                                                         <p className="absolute top-4 left-4 text-center sm:static sm:mt-6">
-                                                            <button className="font-medium text-indigo-600 hover:text-indigo-500" onClick={() => setOpen(false)}>
+                                                            <button 
+                                                            className="font-medium text-indigo-600 hover:text-indigo-500" 
+                                                            onClick={(e) => {
+                                                                e.preventDefault()
+                                                                setOpen(false)
+                                                            }}
+                                                            >
                                                                 No thanks
                                                             </button>
                                                         </p>
@@ -149,7 +155,6 @@ export default function UpsellModal() {
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </Dialog.Panel>
                         </Transition.Child>

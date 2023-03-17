@@ -3,6 +3,7 @@ import React, { useRef, useState } from 'react'
 import { HiChevronRight, HiPlus } from 'react-icons/hi2'
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import Modal from '@/components/ui/Modal'
+import { homeNavigation } from '@/constants/navigation'
 
 const pages = [
     {
@@ -24,7 +25,7 @@ const Index = () => {
     const siteNameRef = useRef<HTMLInputElement | null>(null);
     const siteSubdomainRef = useRef<HTMLInputElement | null>(null);
     return (
-        <Layout title="Home">
+        <Layout title="Shops" navigation={homeNavigation}>
             <Modal showModal={showModal} setShowModal={setShowModal}>
                 <form
                     className="inline-block w-full max-w-md pt-8 px-6 overflow-hidden text-center align-middle transition-all bg-white shadow-xl rounded-lg"
@@ -57,7 +58,7 @@ const Index = () => {
                             </span>
                         </div>
                     </div>
-                    <div className="mt-5 py-433 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                    <div className="mt-5 py-4 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                         <button
                             type="button"
                             className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
@@ -76,11 +77,8 @@ const Index = () => {
                 </form>
             </Modal>
             <div className='px-8'>
-                <div className='flex flex-row justify-between text-white items-center'>
-                    <div>
-                        <h1 className='text-3xl font-bold py-8'>My Pages</h1>
-                    </div>
-                    <div>
+                <div className='flex flex-row justify-end text-white items-center'>
+                    <div className='py-4'>
                         <button
                             type="button"
                             className="inline-flex items-center gap-x-1.5 rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -94,7 +92,7 @@ const Index = () => {
                 <div className="overflow-hidden bg-white shadow sm:rounded-md">
                     <ul role="list" className="divide-y divide-gray-200">
                         {pages.map((page) => (
-                            <li key={page.site}>
+                            <li key={page?.site}>
                                 <a href={page.href} className="block hover:bg-gray-50">
                                     <div className="flex items-center px-4 py-4 sm:px-6">
                                         <div className="flex min-w-0 flex-1 items-center">
