@@ -29,8 +29,8 @@ export default async function middleware(req: NextRequest) {
   const currentHost =
     process.env.NODE_ENV === 'production' && process.env.VERCEL === '1'
       ? hostname
-          .replace(`.custom domain`, '')
-          .replace(`.platformize.vercel.app`, '')
+          .replace(`.one-page-shop-woad.vercel.app`, '')
+          .replace(`.one-page-shop-woad.vercel.app`, '')
       : hostname.replace(`.localhost:3000`, '');
 
   // rewrites for app pages
@@ -45,7 +45,10 @@ export default async function middleware(req: NextRequest) {
   }
 
   // rewrite root application to `/home` folder
-  if (hostname === 'localhost:3000' || hostname === 'platformize.vercel.app') {
+  if (
+    hostname === 'localhost:3000' ||
+    hostname === 'one-page-shop-woad.vercel.app'
+  ) {
     return NextResponse.rewrite(new URL(`/home${path}`, req.url));
   }
 
