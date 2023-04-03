@@ -1,5 +1,10 @@
 import { Dialog, Transition } from "@headlessui/react";
+import { Elements } from "@stripe/react-stripe-js";
 import { Fragment } from "react";
+import { loadStripe } from '@stripe/stripe-js';
+import CheckoutForm from "../CheckoutForm";
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string);
 
 interface ModalProps {
     showModal: boolean;
@@ -18,9 +23,9 @@ export default function Modal({
                 <Dialog
                     as="div"
                     className="fixed inset-0 z-40 overflow-y-auto"
-                    onClose={() => setShowModal(false)}
+                    onClose={() => { }}
                 >
-                    <div className="min-h-screen px-4 text-center">
+                    <div className="min-h-screen px-4 text-center flex items-center justify-center">
                         <Transition.Child
                             as={Fragment}
                             enter="ease-out duration-300"
@@ -48,7 +53,9 @@ export default function Modal({
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            {children}
+                            <Dialog.Panel className="relative w-full">
+                                {children}
+                            </Dialog.Panel>
                         </Transition.Child>
                     </div>
                 </Dialog>

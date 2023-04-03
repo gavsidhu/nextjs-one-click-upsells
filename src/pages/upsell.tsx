@@ -12,7 +12,7 @@ const UpsellPage = () => {
     setIsProcessing(true);
     try {
       const paymentIntentId = router.query.paymentIntentId as string;
-      await updatePaymentIntent(paymentIntentId,1500)
+      await updatePaymentIntent(paymentIntentId, 1500)
       const result = await confirmPaymentIntent(paymentIntentId);
       console.log('Payment succeeded:', result);
       // Redirect the user to a success page or a confirmation page

@@ -1,29 +1,74 @@
 import Layout from '@/components/app/Layout'
-import React, { useRef, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { HiChevronRight, HiPlus } from 'react-icons/hi2'
+import { GetServerSidePropsContext } from 'next';
 import { HiOutlineExternalLink } from 'react-icons/hi'
 import Modal from '@/components/ui/Modal'
 import { homeNavigation } from '@/constants/navigation'
+import axios from 'axios'
+import { User } from '@supabase/auth-helpers-react'
+import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs'
+import { Database } from '../../../types_db';
+import Link from 'next/link';
+import supabase from '@/lib/supabase';
 
-const pages = [
-    {
-        page: {
-            name: 'Ricardo Cooper',
-            description: 'ricardo.cooper@example.com',
-            imageUrl:
-                'https://tailwindui.com/img/ecommerce-images/product-page-04-featured-product-shot.jpg',
-        },
-        site: 'Completed phone screening',
-        href: '#',
-    },
-]
+interface Props {
+    user: User;
+    initialShops: Database["public"]["Tables"]["shops"]["Row"][]
+}
 
-const Index = () => {
+interface ShopPayload {
+    new: Database['public']['Tables']['shops']['Row'];
+}
+
+const Index = ({ user, initialShops }: Props) => {
     const [showModal, setShowModal] = useState(false)
-    const [subdomain, setSubdomain] = useState<string>("");
+    const [shopData, setShopData] = useState({
+        shop_name: "",
+        description: "",
+        subdomain: "",
+        user_id: user?.id
+    })
+    const [shops, setShops] = useState(initialShops);
 
-    const siteNameRef = useRef<HTMLInputElement | null>(null);
-    const siteSubdomainRef = useRef<HTMLInputElement | null>(null);
+    useEffect(() => {
+        const handleShopAdded = (payload: ShopPayload) => {
+            const newShop = payload.new;
+            if (newShop.user_id === user.id) {
+                setShops((shops) => [...shops, newShop]);
+            }
+        };
+
+        // Subscribe to the 'shops' table changes
+
+        const subscription = supabase
+            .channel('any')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'shops' }, handleShopAdded)
+            .subscribe()
+
+
+        return () => {
+            // Unsubscribe when the component is unmounted
+            subscription.unsubscribe();
+        };
+    }, [user.id]);
+
+    const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setShopData({ ...shopData, [e.target.name]: e.target.value })
+    }
+
+    const createShop = async () => {
+        try {
+            const response = await axios.post('/api/shops', {
+                shopData: shopData
+            })
+            console.log(response.data)
+            setShowModal(false)
+        } catch (error) {
+            console.error("Error creating site: ", error)
+        }
+    }
+
     return (
         <Layout title="Shops" navigation={homeNavigation}>
             <Modal showModal={showModal} setShowModal={setShowModal}>
@@ -35,12 +80,22 @@ const Index = () => {
                         <div className="flex max-w-lg rounded-md shadow-sm">
                             <input
                                 type="text"
-                                name="title"
-                                id="title"
+                                name="shop_name"
+                                id="shop_name"
                                 required
-                                ref={siteNameRef}
                                 placeholder='Store Name'
+                                onChange={(e) => onChange(e)}
                                 className="block px-2 w-full min-w-0 flex-1 rounded-md border border-gray-300 py-1.5 text-gray-900 placeholder:text-gray-400 sm:text-sm sm:leading-6 focus:outline-none"
+                            />
+                        </div>
+                        <div className="flex max-w-lg rounded-md shadow-sm">
+                            <textarea
+                                name="description"
+                                id="description"
+                                required
+                                placeholder='Description'
+                                onChange={(e) => onChange(e)}
+                                className="block resize-none px-2 w-full min-w-0 flex-1 rounded-md border border-gray-300 py-1.5 text-gray-900 placeholder:text-gray-400 sm:text-sm sm:leading-6 focus:outline-none"
                             />
                         </div>
                         <div className="flex max-w-lg rounded-md shadow-sm">
@@ -48,9 +103,8 @@ const Index = () => {
                                 type="text"
                                 name="subdomain"
                                 id="subdomain"
-                                onInput={() => setSubdomain(siteSubdomainRef.current!.value)}
                                 placeholder="Subdomain"
-                                ref={siteSubdomainRef}
+                                onChange={(e) => onChange(e)}
                                 className="block px-2 w-full min-w-0 flex-1 border-r-0 rounded-r-none rounded-md border border-gray-300 py-1.5 text-gray-900 placeholder:text-gray-400 sm:text-sm sm:leading-6 focus:outline-none"
                             />
                             <span className="inline-flex items-center rounded-r-md border border-l-0 border-gray-300 px-3 text-gray-500 sm:text-sm">
@@ -62,9 +116,9 @@ const Index = () => {
                         <button
                             type="button"
                             className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
-                            onClick={() => setShowModal(false)}
+                            onClick={createShop}
                         >
-                            Deactivate
+                            Create shop
                         </button>
                         <button
                             type="button"
@@ -85,32 +139,30 @@ const Index = () => {
                             onClick={() => setShowModal(true)}
                         >
                             <HiPlus className="-ml-0.5 h-5 w-5" aria-hidden="true" />
-                            New page
+                            New shop
                         </button>
                     </div>
                 </div>
                 <div className="overflow-hidden bg-white shadow sm:rounded-md">
                     <ul role="list" className="divide-y divide-gray-200">
-                        {pages.map((page) => (
-                            <li key={page?.site}>
-                                <a href={page.href} className="block hover:bg-gray-50">
+                        {shops.map((shop) => (
+                            <li key={shop.id}>
+                                <Link href={`/app/shop/${shop.id}`} className="block hover:bg-gray-50">
                                     <div className="flex items-center px-4 py-4 sm:px-6">
                                         <div className="flex min-w-0 flex-1 items-center">
                                             <div className="flex-shrink-0">
-                                                <img className="h-20 w-20 " src={page.page?.imageUrl} alt="" />
+                                                {shop.image && <img className="h-20 w-20 " src={shop.image} alt="" />}
                                             </div>
                                             <div className="min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4">
                                                 <div>
-                                                    <p className="truncate text-sm font-medium text-indigo-600">{page.page?.name}</p>
+                                                    <p className="truncate text-sm font-medium text-indigo-600">{shop.shop_name}</p>
                                                     <p className="mt-2 flex items-center text-sm text-gray-500">
-                                                        {page.page?.description}
+                                                        {shop.description}
                                                     </p>
-                                                    <a href='#' className="mt-2 inline-flex items-center rounded-md bg-gray-300 px-2.5 py-0.5 text-sm font-medium text-gray-800">
-                                                        <span className="">
-                                                            {page.site}
-                                                        </span>
-                                                        <HiOutlineExternalLink className="h-4 w-4 ml-2" />
-                                                    </a>
+                                                    <div className="mt-2 inline-flex items-center rounded-md bg-gray-300 px-2 py-0.5 text-sm font-medium text-gray-800">
+                                                        {shop.subdomain}.uplevel.com
+                                                        {/* <HiOutlineExternalLink className="h-4 w-4 ml-2" /> */}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -118,7 +170,7 @@ const Index = () => {
                                             <HiChevronRight className="h-5 w-5 text-gray-400" aria-hidden="true" />
                                         </div>
                                     </div>
-                                </a>
+                                </Link>
                             </li>
                         ))}
                     </ul>
@@ -128,5 +180,29 @@ const Index = () => {
         </Layout>
     )
 }
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+    const supabase = createServerSupabaseClient<Database>(ctx);
+    const {
+        data: { session }
+    } = await supabase.auth.getSession();
+
+    if (!session)
+        return {
+            redirect: {
+                destination: '/app/login',
+                permanent: false
+            }
+        };
+
+    const initialShops = (await supabase.from("shops").select("*").eq("user_id", session?.user.id)).data
+
+    return {
+        props: {
+            user: session.user,
+            initialShops
+        }
+    };
+};
 
 export default Index
