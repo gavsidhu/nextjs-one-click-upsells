@@ -8,6 +8,10 @@ export interface NewProductData {
   shop_id: number;
   metadata?: json;
   image?: string;
+}  
+
+export interface UpdateProductData extends NewProductData {
+  id:number
 }
 
 export interface ProductImage {

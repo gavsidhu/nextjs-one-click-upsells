@@ -121,7 +121,7 @@ const NewProductForm = () => {
           name={image.name}
           alt={image.alt}
           moveImage={moveImage}
-          removeImage={removeImage}
+          removeImage={() => removeImage(image.id)}
           handleAltChange={handleAltChange}
         />
       )

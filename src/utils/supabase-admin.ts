@@ -41,7 +41,7 @@ export const createProduct = async (
       }
       return {
         product_id: newProduct.id,
-        image_url: `/product-images/${newProduct.id}/${image.originalname}`,
+        image_url: `${newProduct.id}/${image.originalname}`,
       };
     })
   );
@@ -62,6 +62,61 @@ export const createProduct = async (
     console.log('Product and images added successfully');
   }
 };
+
+export const updateProduct = async (
+  product: NewProductData,
+  images: { buffer: Buffer; originalname: string; mimetype: string }[], 
+  productId:number
+) => {
+  const { error, data } = await supabaseAdmin
+    .from('products')
+    .update(product).eq("id", productId).select()
+
+  if (!data || error) {
+    console.error('Error updating product:', error);
+    return;
+  }
+
+  const updatedProduct = data[0];
+
+  // Upload images to Supabase Storage
+  const uploadedImages = await Promise.all(
+    images.map(async (image) => {
+      const { error: uploadError } = await supabaseAdmin.storage
+        .from('product-images')
+        .upload(`${updatedProduct.id}/${image.originalname}`, image.buffer, {
+          contentType: image.mimetype,
+        });
+
+      if (uploadError) {
+        console.error('Error uploading image:', uploadError);
+        throw new Error(`Error uploading image: ${uploadError})`)
+        return null;
+      }
+      return {
+        product_id: updatedProduct.id,
+        image_url: `${updatedProduct.id}/${image.originalname}`,
+      };
+    })
+  );
+
+  // Filter out null values in the uploadedImages array
+  const nonNullImages = uploadedImages.filter(
+    (img): img is NonNullable<typeof img> => img !== null
+  );
+
+  // Insert image data to the product_images table
+  const { error: insertImagesError } = await supabaseAdmin
+    .from('product_images')
+    .insert(nonNullImages);
+
+  if (insertImagesError) {
+    console.error('Error inserting images:', insertImagesError);
+  } else {
+    console.log('Product and images added successfully');
+  }
+};
+
 export const createShop = async (shopData: NewShopData) => {
   const { error, data } = await supabaseAdmin
     .from('shops')

@@ -7,10 +7,10 @@ interface DraggableImageProps {
     id: number;
     url: string;
     index: number;
-    name: string;
+    name?: string;
     alt?: string;
     moveImage: (dragIndex: number, hoverIndex: number) => void;
-    removeImage: (imageId: number) => void;
+    removeImage: () => void;
     handleAltChange: (imageId: number, newAlt: string) => void;
 }
 
@@ -106,7 +106,7 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
     drag(drop(ref))
 
     const handleRemove = () => {
-        removeImage(id);
+        removeImage();
     };
     return (
         <div
