@@ -16,8 +16,8 @@ export const config = {
 export default async function middleware(req: NextRequest) {
   const url = req.nextUrl;
 
-  // Get hostname of request (demo.localhost:3000)
-  const hostname = req.headers.get('host') || '';
+  // Get hostname of request (e.g. demo.vercel.pub, demo.localhost:3000)
+  const hostname = req.headers.get('host') || 'demo.tryspark.io';
 
   // Get the pathname of the request (e.g. /, /about, /blog/first-post)
   const path = url.pathname;
@@ -29,8 +29,8 @@ export default async function middleware(req: NextRequest) {
   const currentHost =
     process.env.NODE_ENV === 'production' && process.env.VERCEL === '1'
       ? hostname
-          .replace(`.one-page-shop-woad.vercel.app`, '')
-          .replace(`.one-page-shop-woad.vercel.app`, '')
+          .replace(`.tryspark.io`, '')
+          .replace(`.platformize.tryspark.io`, '')
       : hostname.replace(`.localhost:3000`, '');
 
   // rewrites for app pages
@@ -45,10 +45,7 @@ export default async function middleware(req: NextRequest) {
   }
 
   // rewrite root application to `/home` folder
-  if (
-    hostname === 'localhost:3000' ||
-    hostname === 'one-page-shop-woad.vercel.app'
-  ) {
+  if (hostname === 'localhost:3000' || hostname === 'platformize.tryspark.io') {
     return NextResponse.rewrite(new URL(`/home${path}`, req.url));
   }
 
