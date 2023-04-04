@@ -1,20 +1,9 @@
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { HiBars3, HiBell, HiXMark } from 'react-icons/hi2'
-import { useUser } from "@supabase/auth-helpers-react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { HiLogout } from 'react-icons/hi';
-
-const user = {
-    name: 'Tom Cook',
-    email: 'tom@example.com',
-    imageUrl:
-        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-}
-const userNavigation = [
-    { name: 'Your Profile', href: '#' },
-    { name: 'Settings', href: '#' },
-    { name: 'Sign out', href: '#' },
-]
+import { useRouter } from 'next/router';
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
@@ -27,7 +16,16 @@ type Props = {
 }
 export default function Layout({ children, title, navigation }: Props) {
     const user = useUser()
-    console.log(user)
+    const router = useRouter()
+    const supabaseClient = useSupabaseClient()
+    const logOutUser = async () => {
+        const { error } = await supabaseClient.auth.signOut()
+        if (error) {
+            console.error("Error signing out: ", error)
+            return
+        }
+        router.push('/app/login')
+    }
     return (
         <>
             {/*
@@ -78,6 +76,7 @@ export default function Layout({ children, title, navigation }: Props) {
                                                 <div className="ml-4 flex items-center md:ml-6">
                                                     <button
                                                         type="button"
+                                                        onClick={logOutUser}
                                                         className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                                                     >
                                                         <span className="sr-only">Log out</span>
@@ -120,6 +119,7 @@ export default function Layout({ children, title, navigation }: Props) {
                                     <div className="border-t border-gray-700 pt-4 pb-3">
                                         <div className="mt-3 space-y-1 px-2">
                                             <Disclosure.Button
+                                                onClick={logOutUser}
                                                 as="button"
                                                 className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                                             >

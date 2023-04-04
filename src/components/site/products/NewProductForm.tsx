@@ -136,7 +136,7 @@ const NewProductForm = () => {
   };
 
   return (
-    <form className="space-y-8 divide-y divide-gray-200" onSubmit={(e) => addProduct(e)}>
+    <form className="space-y-8 divide-y divide-gray-200 bg-white rounded-md py-8 px-6 shadow-lg" onSubmit={(e) => addProduct(e)}>
       <div className="space-y-8 divide-y divide-gray-200 sm:space-y-5">
         <div className="space-y-6 sm:space-y-5">
           <div>
