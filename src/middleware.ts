@@ -24,6 +24,7 @@ export default async function middleware(req: NextRequest) {
     return NextResponse.rewrite(new URL(`/home${path}`, req.url));
   }
 
+  // rewrite everything else to `/_sites/[site] dynamic route
   return NextResponse.rewrite(
     new URL(`/_sites/${currentHost}${path}`, req.url)
   );
