@@ -11,19 +11,18 @@ export default async function middleware(req: NextRequest) {
 
   const currentHost =
     process.env.NODE_ENV === 'production' && process.env.VERCEL === '1'
-      ? hostname
-          .replace(`.tryspark.io`, '')
-          .replace(`.platformize.vercel.app`, '')
+      ? hostname.replace(`.tryspark.io`, '')
       : hostname.replace(`.localhost:3000`, '');
 
+  // rewrite app pages to `/src/pages/app` folder
   if (currentHost == 'app') {
-    url.pathname = `/app${url.pathname}`;
+    url.pathname = `/src/pages/app${url.pathname}`;
     return NextResponse.rewrite(url);
   }
 
-  // rewrite root application to `/home` folder
+  // rewrite root application to `/src/pages/home` folder
   if (hostname === 'tryspark.io' || hostname === 'localhost:3000') {
-    return NextResponse.rewrite(new URL(`/home${path}`, req.url));
+    return NextResponse.rewrite(new URL(`/src/pages/home${path}`, req.url));
   }
 
   return NextResponse.rewrite(
