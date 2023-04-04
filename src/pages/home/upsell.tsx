@@ -1,7 +1,7 @@
 import { useStripe } from '@stripe/react-stripe-js';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { confirmPaymentIntent, updatePaymentIntent } from '../lib/stripe';
+import { confirmPaymentIntent, updatePaymentIntent } from '../../lib/stripe';
 
 const UpsellPage = () => {
   const router = useRouter();
