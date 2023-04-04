@@ -1,3 +1,4 @@
+import Layout from '@/components/site/Layout';
 import NewProductForm from '@/components/site/products/NewProductForm'
 import React, { useState } from 'react'
 import { DndProvider } from 'react-dnd'
@@ -11,9 +12,9 @@ const AddProduct = () => {
         },
     ]);
     return (
-        <div className='max-w-5xl mx-auto py-24'>
+        <Layout title='Create a new product'>
             <NewProductForm />
-        </div>
+        </Layout>
     )
 }
 

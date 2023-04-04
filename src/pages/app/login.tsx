@@ -13,7 +13,7 @@ const login = () => {
 
     useEffect(() => {
         if (user) {
-            router.replace('/app/account');
+            router.replace('/app');
         }
     }, [user]);
     if (!user)
