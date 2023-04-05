@@ -2,7 +2,7 @@ import { PaymentIntent, PaymentMethodResult } from '@stripe/stripe-js';
 import axios from 'axios';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2022-11-15',
 });
 
