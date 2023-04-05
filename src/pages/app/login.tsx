@@ -13,7 +13,7 @@ const login = () => {
 
     useEffect(() => {
         if (user) {
-            router.replace('/app');
+            router.replace('/');
         }
     }, [user]);
     if (!user)
@@ -30,7 +30,7 @@ const login = () => {
                         <Auth
                             supabaseClient={supabaseClient}
                             // providers={['github']}
-                            redirectTo={`${getURL()}app`}
+                            redirectTo={`${getURL()}`}
                             magicLink={false}
                             appearance={{
                                 theme: ThemeSupa,

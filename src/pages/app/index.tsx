@@ -147,7 +147,7 @@ const Index = ({ user, initialShops }: Props) => {
                     <ul role="list" className="divide-y divide-gray-200">
                         {shops.map((shop) => (
                             <li key={shop.id}>
-                                <Link href={`/app/shop/${shop.id}`} className="block hover:bg-gray-50">
+                                <Link href={`/shop/${shop.id}`} className="block hover:bg-gray-50">
                                     <div className="flex items-center px-4 py-4 sm:px-6">
                                         <div className="flex min-w-0 flex-1 items-center">
                                             <div className="flex-shrink-0">
@@ -190,7 +190,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     if (!session)
         return {
             redirect: {
-                destination: '/app/login',
+                destination: '/login',
                 permanent: false
             }
         };
