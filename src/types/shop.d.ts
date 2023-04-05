@@ -1,3 +1,5 @@
+import { Database } from '../../types_db';
+
 export interface ShopImage {
   buffer: Buffer;
   originalname: string;
@@ -9,7 +11,9 @@ export interface NewShopData {
   description: string;
   logo?: string;
   image?: string;
-  sub_domain: string;
+  subdomain: string;
   custom_domain?: string;
   user_id: string;
 }
+
+export type Shop = Database['public']['Tables']['shops']['Row'];

@@ -5,7 +5,7 @@ import { NewShopData } from '@/types/shop';
 
 // Note: supabaseAdmin uses the SERVICE_ROLE_KEY which you must only use in a secure server-side context
 // as it has admin priviliges and overwrites RLS policies!
-const supabaseAdmin = createClient<Database>(
+export const supabaseAdmin = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
   process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 );
@@ -65,12 +65,14 @@ export const createProduct = async (
 
 export const updateProduct = async (
   product: NewProductData,
-  images: { buffer: Buffer; originalname: string; mimetype: string }[], 
-  productId:number
+  images: { buffer: Buffer; originalname: string; mimetype: string }[],
+  productId: number
 ) => {
   const { error, data } = await supabaseAdmin
     .from('products')
-    .update(product).eq("id", productId).select()
+    .update(product)
+    .eq('id', productId)
+    .select();
 
   if (!data || error) {
     console.error('Error updating product:', error);
@@ -90,7 +92,7 @@ export const updateProduct = async (
 
       if (uploadError) {
         console.error('Error uploading image:', uploadError);
-        throw new Error(`Error uploading image: ${uploadError})`)
+        throw new Error(`Error uploading image: ${uploadError})`);
         return null;
       }
       return {
@@ -127,4 +129,27 @@ export const createShop = async (shopData: NewShopData) => {
     console.error('Error creating shop: ', error);
     return;
   }
+};
+
+export const addCustomDomain = async (shopId: string, domain: string) => {
+  const { data, error } = await supabaseAdmin
+    .from('shops')
+    .update({ custom_domain: domain })
+    .eq('id', parseInt(shopId));
+
+  if (error) {
+    // Handle the error as needed
+    console.error('Error updating site:', error);
+  }
+
+  if (data) {
+    console.log('Successfully added custom domain');
+  }
+};
+
+export const deleteCustomDomain = async (shopId: string) => {
+  await supabaseAdmin
+    .from('shops')
+    .update({ custom_domain: null })
+    .eq('id', parseInt(shopId));
 };
