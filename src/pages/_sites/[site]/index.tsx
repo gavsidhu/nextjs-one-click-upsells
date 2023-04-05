@@ -60,7 +60,7 @@ interface Props {
 
 const index = ({ banner, data }: Props) => {
     console.log("data", data)
-    const mainProduct = data.products.filter((product) => product.product_type === 'main')[0]
+    const mainProduct = data?.products?.filter((product) => product.product_type === 'main')[0]
     const [open, setOpen] = useState(false)
 
     const handleClick = (e: React.FormEvent) => {
@@ -115,7 +115,7 @@ const index = ({ banner, data }: Props) => {
                                 </div>
 
                                 <Tab.Panels className="aspect-w-1 aspect-h-1 w-[60%] mx-auto">
-                                    {mainProduct.images.map((image) => (
+                                    {mainProduct?.images?.map((image) => (
                                         <Tab.Panel key={image.id}>
                                             <img
                                                 src={image.public_url}
@@ -129,11 +129,11 @@ const index = ({ banner, data }: Props) => {
 
                             {/* Product info */}
                             <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
-                                <h1 className="text-3xl font-bold tracking-tight text-gray-900">{mainProduct.product_name}</h1>
+                                <h1 className="text-3xl font-bold tracking-tight text-gray-900">{mainProduct?.product_name}</h1>
 
                                 <div className="mt-3">
                                     <h2 className="sr-only">Product information</h2>
-                                    <p className="text-3xl tracking-tight text-gray-900">${mainProduct.price}</p>
+                                    <p className="text-3xl tracking-tight text-gray-900">${mainProduct?.price}</p>
                                 </div>
 
                                 <div className="mt-6">
@@ -141,7 +141,7 @@ const index = ({ banner, data }: Props) => {
 
                                     <div
                                         className="space-y-6 text-base text-gray-700"
-                                        dangerouslySetInnerHTML={{ __html: mainProduct.description }}
+                                        dangerouslySetInnerHTML={{ __html: mainProduct?.description }}
                                     />
                                 </div>
                                 <div className="mt-10 block">
