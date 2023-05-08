@@ -7,7 +7,9 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 });
 
 // Create a PaymentIntent for the initial purchase
-export const createPaymentIntent = async (paymentMethodId: string) => {
+export const createPaymentIntentWithPaymentMethod = async (
+  paymentMethodId: string
+) => {
   const paymentIntent = await axios.post(
     'http://localhost:3000/api/create-payment-intent',
     {
@@ -16,6 +18,20 @@ export const createPaymentIntent = async (paymentMethodId: string) => {
       name: 'Joa Shmoe',
       email: 'JoaShmoe@3mail.com',
       paymentMethodId,
+    }
+  );
+
+  return paymentIntent.data;
+};
+
+export const createPaymentIntent = async () => {
+  const paymentIntent = await axios.post(
+    'http://sdfsdfsf.localhost:3000/api/create-payment-intent',
+    {
+      amount: 1000,
+      currency: 'usd',
+      name: 'Joa Shmoe',
+      email: 'JoaShmoe@3mail.com',
     }
   );
 

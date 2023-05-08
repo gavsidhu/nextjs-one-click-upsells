@@ -9,14 +9,18 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { amount, currency, name, email, paymentMethodId } = req.body;
+  try {
+    const { amount, currency, name, email } = req.body;
 
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount,
-    currency,
-    metadata: { name, email },
-    payment_method: paymentMethodId,
-  });
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency,
+      metadata: { name, email },
+    });
 
-  res.status(200).json(paymentIntent);
+    res.status(200).json(paymentIntent);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Unexpected error');
+  }
 }
